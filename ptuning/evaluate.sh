@@ -4,11 +4,11 @@ STEP=3000
 
 CUDA_VISIBLE_DEVICES=0 python3 main.py \
     --do_predict \
-    --validation_file AdvertiseGen/dev.json \
-    --test_file AdvertiseGen/dev.json \
+    --validation_file data/dev.json \
+    --test_file data/dev.json \
     --overwrite_cache \
-    --prompt_column content \
-    --response_column summary \
+    --prompt_column question \
+    --response_column answer \
     --model_name_or_path THUDM/chatglm-6b \
     --ptuning_checkpoint ./output/$CHECKPOINT/checkpoint-$STEP \
     --output_dir ./output/$CHECKPOINT \

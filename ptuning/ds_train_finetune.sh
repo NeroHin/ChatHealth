@@ -6,10 +6,10 @@ MASTER_PORT=$(shuf -n 1 -i 10000-65535)
 deepspeed --num_gpus=4 --master_port $MASTER_PORT main.py \
     --deepspeed deepspeed.json \
     --do_train \
-    --train_file AdvertiseGen/train.json \
-    --test_file AdvertiseGen/dev.json \
-    --prompt_column content \
-    --response_column summary \
+    --train_file data/train.json \
+    --test_file data/dev.json \
+    --prompt_column question \
+    --response_column answer \
     --overwrite_cache \
     --model_name_or_path THUDM/chatglm-6b \
     --output_dir ./output/adgen-chatglm-6b-ft-$LR \
