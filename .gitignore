@@ -1,5 +1,5 @@
 # ignore
-/ptuning/AdvertiseGen
+/ptuning/data
 /ptuning/output
 /ptuning/wandb
 
