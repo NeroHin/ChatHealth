@@ -1,5 +1,13 @@
 # ChatGLM-6B
 
+
+<p align="center">
+   🌐 <a href="https://chatglm.cn/blog" target="_blank">Blog</a> • 🤗 <a href="https://huggingface.co/THUDM/chatglm-6b" target="_blank">HF Repo</a> • 🐦 <a href="https://twitter.com/thukeg" target="_blank">Twitter</a> • 📃 <a href="https://arxiv.org/abs/2103.10360" target="_blank">[GLM@ACL 22]</a> <a href="https://github.com/THUDM/GLM" target="_blank">[GitHub]</a> • 📃 <a href="https://arxiv.org/abs/2210.02414" target="_blank">[GLM-130B@ICLR 23]</a> <a href="https://github.com/THUDM/GLM-130B" target="_blank">[GitHub]</a> <br>
+</p>
+<p align="center">
+    👋 Join our <a href="https://join.slack.com/t/chatglm/shared_invite/zt-1th2q5u69-7tURzFuOPanmuHy9hsZnKA" target="_blank">Slack</a> and <a href="resources/WECHAT.md" target="_blank">WeChat</a>
+</p>
+
 ## Introduction
 
 ChatGLM-6B is an open bilingual language model based on [General Language Model (GLM)](https://github.com/THUDM/GLM) framework, with 6.2 billion parameters. With the quantization technique, users can deploy locally on consumer-grade graphics cards (only 6GB of GPU memory is required at the INT4 quantization level).
@@ -140,11 +148,6 @@ Model quantization brings a certain performance decline. After testing, ChatGLM-
 model = AutoModel.from_pretrained("THUDM/chatglm-6b-int4", trust_remote_code=True).half().cuda()
 ```
 
-**[2023/03/24]** We further provide an embedding-quantized model whose model parameters only cost 4.3GB GPU memory
-```python
-model = AutoModel.from_pretrained("THUDM/chatglm-6b-int4-qe", trust_remote_code=True).half().cuda()
-```
-
 ### CPU Deployment
 
 If your computer is not equipped with GPU, you can also conduct inference on CPU, but the inference speed is slow (and taking about 32GB of memory):
@@ -172,9 +175,19 @@ model = AutoModel.from_pretrained("your local path", trust_remote_code=True).hal
 ```
 Then you can use GPU-accelerated model inference on Mac.
 
+### Multi-GPU Deployment
+If you have multiple GPUs, but the memory size of each GPU is not sufficient to accommodate the entire model, you can split the model across multiple GPUs. 
+
+First, install accelerate: `pip install accelerate`, and then load the model using the following method:
+```python
+from utils import load_model_on_gpus
+model = load_model_on_gpus("THUDM/chatglm-6b", num_gpus=2)
+```
+
+This will deploy the model onto two GPUs for inference. You can change `num_gpus` to the number of GPUs you want to use. By default, the model is split evenly, but you can also specify the `device_map` parameter to customize the splitting.
+
 ## Parameter-efficient Tuning
 Parameter-efficient tuning based on [P-tuning v2](https://github.com/THUDM/P-tuning-v2). See [ptuning/README.md](ptuning/README.md) for details on how to use it.
-
 
 ## ChatGLM-6B Examples
 

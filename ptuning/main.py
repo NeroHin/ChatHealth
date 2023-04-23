@@ -118,7 +118,8 @@ def main():
         prefix_state_dict = torch.load(os.path.join(model_args.ptuning_checkpoint, "pytorch_model.bin"))
         new_prefix_state_dict = {}
         for k, v in prefix_state_dict.items():
-            new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
+            if k.startswith("transformer.prefix_encoder."):
+                new_prefix_state_dict[k[len("transformer.prefix_encoder."):]] = v
         model.transformer.prefix_encoder.load_state_dict(new_prefix_state_dict)
     else:
         model = AutoModel.from_pretrained(model_args.model_name_or_path, config=config, trust_remote_code=True)
@@ -166,8 +167,8 @@ def main():
                 else:
                     prompt = ""
                     history = examples[history_column][i]
-                    for i, (old_query, response) in enumerate(history):
-                        prompt += "[Round {}]\n问：{}\n答：{}\n".format(i, old_query, response)
+                    for turn_idx, (old_query, response) in enumerate(history):
+                        prompt += "[Round {}]\n问：{}\n答：{}\n".format(turn_idx, old_query, response)
                     prompt += "[Round {}]\n问：{}\n答：".format(len(history), query)
                 inputs.append(prompt)
                 targets.append(examples[response_column][i])
@@ -200,8 +201,8 @@ def main():
                 else:
                     prompt = ""
                     history = examples[history_column][i]
-                    for i, (old_query, response) in enumerate(history):
-                        prompt += "[Round {}]\n问：{}\n答：{}\n".format(i, old_query, response)
+                    for turn_idx, (old_query, response) in enumerate(history):
+                        prompt += "[Round {}]\n问：{}\n答：{}\n".format(turn_idx, old_query, response)
                     prompt += "[Round {}]\n问：{}\n答：".format(len(history), query)
 
                 prompt = prefix + prompt
@@ -354,6 +355,7 @@ def main():
         tokenizer=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.predict_with_generate else None,
+        save_prefixencoder=model_args.pre_seq_len is not None
     )
 
     # Training
